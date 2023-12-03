@@ -84,12 +84,6 @@ public class SpreadsheetDate extends SerialDate {
     /** For serialization. */
     @Serial
     private static final long serialVersionUID = -2039586705374454461L;
-    
-    /** 
-     * The day number (1-Jan-1900 = 2, 2-Jan-1900 = 3, ..., 31-Dec-9999 = 
-     * 2958465). 
-     */
-    private final int serial;
 
     /** The day of the month (1 to 28, 29, 30 or 31 depending on the month). */
     private final int day;
@@ -358,48 +352,8 @@ public class SpreadsheetDate extends SerialDate {
      * @return <code>true</code> if this SerialDate represents the same date
      *         as the specified SerialDate.
      */
-    public boolean isOnOrBefore(final SerialDate other) {
-        return (this.serial <= other.toSerial());
-    }
-
-    /**
-     * Returns true if this SerialDate represents the same date as the
-     * specified SerialDate.
-     *
-     * @param other  the date being compared to.
-     *
-     * @return <code>true</code> if this SerialDate represents the same date
-     *         as the specified SerialDate.
-     */
     public boolean isAfter(final SerialDate other) {
         return (this.serial > other.toSerial());
-    }
-
-    /**
-     * Returns true if this SerialDate represents the same date as the
-     * specified SerialDate.
-     *
-     * @param other  the date being compared to.
-     *
-     * @return <code>true</code> if this SerialDate represents the same date as
-     *         the specified SerialDate.
-     */
-    public boolean isOnOrAfter(final SerialDate other) {
-        return (this.serial >= other.toSerial());
-    }
-
-    /**
-     * Returns <code>true</code> if this {@link SerialDate} is within the 
-     * specified range (INCLUSIVE).  The date order of d1 and d2 is not 
-     * important.
-     *
-     * @param d1  a boundary date for the range.
-     * @param d2  the other boundary date for the range.
-     *
-     * @return A boolean.
-     */
-    public boolean isInRange(final SerialDate d1, final SerialDate d2) {
-        return isInRange(d1, d2, SerialDate.INCLUDE_BOTH);
     }
 
     /**

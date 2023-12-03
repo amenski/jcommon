@@ -180,6 +180,12 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
     private String description;
 
     /**
+     * The day number (1-Jan-1900 = 2, 2-Jan-1900 = 3, ..., 31-Dec-9999 =
+     * 2958465).
+     */
+    protected int serial;
+
+    /**
      * Default constructor.
      */
     protected SerialDate() {
@@ -745,7 +751,9 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * @return <code>true</code> if this SerialDate represents the same date
      *         as the specified SerialDate.
      */
-    public abstract boolean isOnOrBefore(SerialDate other);
+    public boolean isOnOrBefore(SerialDate other) {
+        return isOn(other) || isBefore(other);
+    }
 
     /**
      * Returns true if this SerialDate represents the same date as the 
@@ -767,7 +775,9 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * @return <code>true</code> if this SerialDate represents the same date
      *         as the specified SerialDate.
      */
-    public abstract boolean isOnOrAfter(SerialDate other);
+    public boolean isOnOrAfter(SerialDate other) {
+        return isOn(other) || isAfter(other);
+    }
 
     /**
      * Returns <code>true</code> if this {@link SerialDate} is within the 
@@ -779,7 +789,9 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      *
      * @return A boolean.
      */
-    public abstract boolean isInRange(SerialDate d1, SerialDate d2);
+    public boolean isInRange(SerialDate d1, SerialDate d2) {
+        return isInRange(d1, d2, INCLUDE_BOTH);
+    }
 
     /**
      * Returns <code>true</code> if this {@link SerialDate} is within the 
