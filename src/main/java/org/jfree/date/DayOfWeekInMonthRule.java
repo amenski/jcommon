@@ -45,6 +45,7 @@
 package org.jfree.date;
 
 import org.jfree.date.SerialDate.DayOfWeekConstants;
+import org.jfree.date.SerialDate.MonthConstants;
 
 /**
  * An annual date rule that specifies the nth day of the week in a given month
@@ -67,7 +68,7 @@ public class DayOfWeekInMonthRule extends AnnualDateRule {
      * Default constructor: builds a rule for the first Monday in January by default.
      */
     public DayOfWeekInMonthRule() {
-        this(1, DayOfWeekConstants.MONDAY.get(), MonthConstants.JANUARY);
+        this(1, DayOfWeekConstants.MONDAY.get(), MonthConstants.JANUARY.get());
     }
 
     /**

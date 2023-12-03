@@ -65,8 +65,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import static org.jfree.date.MonthConstants.*;
-
 /**
  *  An abstract class that defines our requirements for manipulating dates,
  *  without tying down a particular implementation.
@@ -379,10 +377,10 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      *
      * @return the number of the last day of the month.
      */
-    public static int lastDayOfMonth(final int month, final int yyyy) {
+    public static int lastDayOfMonth(final MonthConstants month, final int yyyy) {
 
-        int result = LAST_DAY_OF_MONTH[month];
-        if (month != FEBRUARY) {
+        int result = LAST_DAY_OF_MONTH[month.get()];
+        if (month != MonthConstants.FEBRUARY) {
             return result;
         }
         if (isLeapYear(yyyy)) {
@@ -427,7 +425,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
         final int mm = (12 * base.getYYYY() + base.getMonth() + months - 1) 
                        % 12 + 1;
         final int dd = Math.min(
-            base.getDayOfMonth(), SerialDate.lastDayOfMonth(mm, yy)
+            base.getDayOfMonth(), SerialDate.lastDayOfMonth(MonthConstants.from(mm), yy)
         );
         return SerialDate.createInstance(dd, mm, yy);
 
@@ -450,7 +448,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
 
         final int targetY = baseY + years;
         final int targetD = Math.min(
-            baseD, SerialDate.lastDayOfMonth(baseM, targetY)
+            baseD, SerialDate.lastDayOfMonth(MonthConstants.from(baseM), targetY)
         );
 
         return SerialDate.createInstance(targetD, baseM, targetY);
@@ -539,7 +537,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      */
     public SerialDate getEndOfCurrentMonth(final SerialDate base) {
         final int last = SerialDate.lastDayOfMonth(
-            base.getMonth(), base.getYYYY()
+            base.getMonthConstant(), base.getYYYY()
         );
         return SerialDate.createInstance(last, base.getMonth(), base.getYYYY());
     }
@@ -555,15 +553,14 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      */
     public static String weekInMonthToString(final int count) {
 
-        switch (count) {
-            case SerialDate.FIRST_WEEK_IN_MONTH : return "First";
-            case SerialDate.SECOND_WEEK_IN_MONTH : return "Second";
-            case SerialDate.THIRD_WEEK_IN_MONTH : return "Third";
-            case SerialDate.FOURTH_WEEK_IN_MONTH : return "Fourth";
-            case SerialDate.LAST_WEEK_IN_MONTH : return "Last";
-            default :
-                return "SerialDate.weekInMonthToString(): invalid code.";
-        }
+        return switch (count) {
+            case SerialDate.FIRST_WEEK_IN_MONTH -> "First";
+            case SerialDate.SECOND_WEEK_IN_MONTH -> "Second";
+            case SerialDate.THIRD_WEEK_IN_MONTH -> "Third";
+            case SerialDate.FOURTH_WEEK_IN_MONTH -> "Fourth";
+            case SerialDate.LAST_WEEK_IN_MONTH -> "Last";
+            default -> "SerialDate.weekInMonthToString(): invalid code.";
+        };
 
     }
 
@@ -578,12 +575,12 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      */
     public static String relativeToString(final int relative) {
 
-        switch (relative) {
-            case SerialDate.PRECEDING : return "Preceding";
-            case SerialDate.NEAREST : return "Nearest";
-            case SerialDate.FOLLOWING : return "Following";
-            default : return "ERROR : Relative To String";
-        }
+        return switch (relative) {
+            case SerialDate.PRECEDING -> "Preceding";
+            case SerialDate.NEAREST -> "Nearest";
+            case SerialDate.FOLLOWING -> "Following";
+            default -> "ERROR : Relative To String";
+        };
 
     }
 
@@ -692,6 +689,10 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * @return the month of the year.
      */
     public abstract int getMonth();
+
+    public MonthConstants getMonthConstant() {
+        return MonthConstants.from(this.getMonth());
+    }
 
     /**
      * Returns the day of the month.

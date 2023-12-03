@@ -122,7 +122,7 @@ public class SpreadsheetDate extends SerialDate {
             );
         }
 
-        if ((day >= 1) && (day <= SerialDate.lastDayOfMonth(month, year))) {
+        if ((day >= 1) && (day <= SerialDate.lastDayOfMonth(MonthConstants.from(month), year))) {
             this.day = day;
         }
         else {
