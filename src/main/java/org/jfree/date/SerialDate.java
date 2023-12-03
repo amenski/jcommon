@@ -202,19 +202,13 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
         final String[] shortWeekdayNames = DATE_FORMAT_SYMBOLS.getShortWeekdays();
         final String[] weekDayNames = DATE_FORMAT_SYMBOLS.getWeekdays();
 
-        int result = -1;
         s = s.trim();
         for (int i = 0; i < weekDayNames.length; i++) {
-            if (s.equals(shortWeekdayNames[i])) {
-                result = i;
-                break;
-            }
-            if (s.equals(weekDayNames[i])) {
-                result = i;
-                break;
+            if (s.equals(shortWeekdayNames[i]) || s.equals(weekDayNames[i])) {
+                return i;
             }
         }
-        return result;
+        return -1;
 
     }
 
@@ -274,7 +268,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      *
      * @return a string representing the supplied month.
      */
-    public static String monthCodeToString(final MonthConstants month) {
+    public static String monthCodeToString(final Month month) {
 
         return monthCodeToString(month, false);
 
@@ -292,7 +286,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      *
      * @return a string representing the supplied month.
      */
-    public static String monthCodeToString(final MonthConstants month,
+    public static String monthCodeToString(final Month month,
                                            final boolean shortened) {
         final String[] months;
 
@@ -327,15 +321,11 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
 
         s = s.trim();
         for (int i = 0; i < monthNames.length; i++) {
-            if (s.equals(shortMonthNames[i])) {
-                return i + 1;
-            }
-            if (s.equals(monthNames[i])) {
+            if (s.equals(shortMonthNames[i]) || s.equals(monthNames[i])) {
                 return i + 1;
             }
         }
         return -1;
-
     }
 
     /**
@@ -377,10 +367,10 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      *
      * @return the number of the last day of the month.
      */
-    public static int lastDayOfMonth(final MonthConstants month, final int yyyy) {
+    public static int lastDayOfMonth(final Month month, final int yyyy) {
 
         int result = LAST_DAY_OF_MONTH[month.get()];
-        if (month != MonthConstants.FEBRUARY) {
+        if (month != Month.FEBRUARY) {
             return result;
         }
         if (isLeapYear(yyyy)) {
@@ -425,7 +415,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
         final int mm = (12 * base.getYYYY() + base.getMonth() + months - 1) 
                        % 12 + 1;
         final int dd = Math.min(
-            base.getDayOfMonth(), SerialDate.lastDayOfMonth(MonthConstants.from(mm), yy)
+            base.getDayOfMonth(), SerialDate.lastDayOfMonth(Month.from(mm), yy)
         );
         return SerialDate.createInstance(dd, mm, yy);
 
@@ -448,7 +438,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
 
         final int targetY = baseY + years;
         final int targetD = Math.min(
-            baseD, SerialDate.lastDayOfMonth(MonthConstants.from(baseM), targetY)
+            baseD, SerialDate.lastDayOfMonth(Month.from(baseM), targetY)
         );
 
         return SerialDate.createInstance(targetD, baseM, targetY);
@@ -465,7 +455,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * @return the latest date that falls on the specified day-of-the-week and 
      *         is BEFORE the base date.
      */
-    public static SerialDate getPreviousDayOfWeek(final DayOfWeekConstants targetWeekday, final SerialDate base) {
+    public static SerialDate getPreviousDayOfWeek(final Day targetWeekday, final SerialDate base) {
         final int adjust;
         final int baseDOW = base.getDayOfWeek();
         final int targetWeekdayNumber = targetWeekday.get();
@@ -490,7 +480,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * @return the earliest date that falls on the specified day-of-the-week 
      *         and is AFTER the base date.
      */
-    public static SerialDate getFollowingDayOfWeek(DayOfWeekConstants targetWeekday, final SerialDate base) {
+    public static SerialDate getFollowingDayOfWeek(Day targetWeekday, final SerialDate base) {
         final int adjust;
         final int baseDOW = base.getDayOfWeek();
         final int targetWeekdayNumber = targetWeekday.get();
@@ -514,7 +504,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * @return the date that falls on the specified day-of-the-week and is 
      *         CLOSEST to the base date.
      */
-    public static SerialDate getNearestDayOfWeek(final DayOfWeekConstants targetDOW, final SerialDate base) {
+    public static SerialDate getNearestDayOfWeek(final Day targetDOW, final SerialDate base) {
         final int baseDOW = base.getDayOfWeek();
         final int targetWeekdayNumber = targetDOW.get();
         int adjust = -Math.abs(targetWeekdayNumber - baseDOW);
@@ -672,7 +662,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * @return  a string representation of the date.
      */
     public String toString() {
-        return getDayOfMonth() + "-" + SerialDate.monthCodeToString(MonthConstants.from(getMonth()))
+        return getDayOfMonth() + "-" + SerialDate.monthCodeToString(Month.from(getMonth()))
                                + "-" + getYYYY();
     }
 
@@ -690,8 +680,8 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      */
     public abstract int getMonth();
 
-    public MonthConstants getMonthConstant() {
-        return MonthConstants.from(this.getMonth());
+    public Month getMonthConstant() {
+        return Month.from(this.getMonth());
     }
 
     /**
@@ -819,7 +809,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      *         is BEFORE this date.
      */
     public SerialDate getPreviousDayOfWeek(final int targetDOW) {
-        return getPreviousDayOfWeek(DayOfWeekConstants.from(targetDOW), this);
+        return getPreviousDayOfWeek(Day.from(targetDOW), this);
     }
 
     /**
@@ -832,7 +822,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      *         and is AFTER this date.
      */
     public SerialDate getFollowingDayOfWeek(final int targetDOW) {
-        return getFollowingDayOfWeek(DayOfWeekConstants.from(targetDOW), this);
+        return getFollowingDayOfWeek(Day.from(targetDOW), this);
     }
 
     /**
@@ -843,11 +833,11 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * @return the nearest date that falls on the specified day-of-the-week.
      */
     public SerialDate getNearestDayOfWeek(final int targetDOW) {
-        return getNearestDayOfWeek(DayOfWeekConstants.from(targetDOW), this);
+        return getNearestDayOfWeek(Day.from(targetDOW), this);
     }
 
 
-    public enum MonthConstants {
+    public enum Month {
         JANUARY(1),
         FEBRUARY(2),
         MARCH(3),
@@ -863,7 +853,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
 
         private final int monthNumber;
 
-        MonthConstants(int monthNumber) {
+        Month(int monthNumber) {
             this.monthNumber = monthNumber;
         }
 
@@ -871,15 +861,15 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
             return monthNumber;
         }
 
-        public static MonthConstants from(int monthNumber) {
-            for(MonthConstants m : MonthConstants.values()) {
+        public static Month from(int monthNumber) {
+            for(Month m : Month.values()) {
                 if(monthNumber == m.monthNumber) return m;
             }
             throw new IllegalArgumentException("MonthConstants: Invalid value for month");
         }
     }
 
-    public enum DayOfWeekConstants {
+    public enum Day {
         SUNDAY(1),
         MONDAY(2),
         TUESDAY(3),
@@ -890,7 +880,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
 
         private final int dayNumber;
 
-        DayOfWeekConstants(int dayNumber) {
+        Day(int dayNumber) {
             this.dayNumber = dayNumber;
         }
 
@@ -898,8 +888,8 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
             return dayNumber;
         }
 
-        public static DayOfWeekConstants from(int dayNumber) {
-            for(DayOfWeekConstants d : DayOfWeekConstants.values()) {
+        public static Day from(int dayNumber) {
+            for(Day d : Day.values()) {
                 if(dayNumber == d.dayNumber) return d;
             }
             throw new IllegalArgumentException("DayOfWeekConstants: Invalid value for day-of-week");

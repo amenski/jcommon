@@ -45,7 +45,7 @@
 
 package org.jfree.date;
 
-import org.jfree.date.SerialDate.MonthConstants;
+import org.jfree.date.SerialDate.Month;
 
 /**
  * An annual date rule where the generated date always falls on the same day
@@ -68,7 +68,7 @@ public class DayAndMonthRule extends AnnualDateRule {
      * Default constructor: builds a DayAndMonthRule for 1 January.
      */
     public DayAndMonthRule() {
-        this(1, MonthConstants.JANUARY.get());
+        this(1, Month.JANUARY.get());
     }
 
     /**

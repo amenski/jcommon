@@ -46,8 +46,8 @@
 
 package org.jfree.date;
 
-import org.jfree.date.SerialDate.DayOfWeekConstants;
-import org.jfree.date.SerialDate.MonthConstants;
+import org.jfree.date.SerialDate.Day;
+import org.jfree.date.SerialDate.Month;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
@@ -116,25 +116,25 @@ public class SerialDateUtilities {
     public int stringToWeekday(final String s) {
 
         if (s.equals(this.weekdays[Calendar.SATURDAY])) {
-            return DayOfWeekConstants.SATURDAY.get();
+            return Day.SATURDAY.get();
         }
         else if (s.equals(this.weekdays[Calendar.SUNDAY])) {
-            return DayOfWeekConstants.SUNDAY.get();
+            return Day.SUNDAY.get();
         }
         else if (s.equals(this.weekdays[Calendar.MONDAY])) {
-            return DayOfWeekConstants.MONDAY.get();
+            return Day.MONDAY.get();
         }
         else if (s.equals(this.weekdays[Calendar.TUESDAY])) {
-            return DayOfWeekConstants.TUESDAY.get();
+            return Day.TUESDAY.get();
         }
         else if (s.equals(this.weekdays[Calendar.WEDNESDAY])) {
-            return DayOfWeekConstants.WEDNESDAY.get();
+            return Day.WEDNESDAY.get();
         }
         else if (s.equals(this.weekdays[Calendar.THURSDAY])) {
-            return DayOfWeekConstants.THURSDAY.get();
+            return Day.THURSDAY.get();
         }
         else {
-            return DayOfWeekConstants.FRIDAY.get();
+            return Day.FRIDAY.get();
         }
 
     }
@@ -333,7 +333,7 @@ public class SerialDateUtilities {
     public static boolean isLastDayOfFebruary(final SerialDate d) {
 
         final int dom;
-        if (d.getMonthConstant() == MonthConstants.FEBRUARY) {
+        if (d.getMonthConstant() == Month.FEBRUARY) {
             dom = d.getDayOfMonth();
             if (SerialDate.isLeapYear(d.getYYYY())) {
                 return (dom == 29);
@@ -375,7 +375,7 @@ public class SerialDateUtilities {
             y2 = end.getYYYY();
             for (year = y1; year == y2; year++) {
                 if (SerialDate.isLeapYear(year)) {
-                    feb29 = SerialDate.createInstance(29, MonthConstants.FEBRUARY.get(), year);
+                    feb29 = SerialDate.createInstance(29, Month.FEBRUARY.get(), year);
                     if (feb29.isInRange(start, end, SerialDate.INCLUDE_SECOND)) {
                         count++;
                     }

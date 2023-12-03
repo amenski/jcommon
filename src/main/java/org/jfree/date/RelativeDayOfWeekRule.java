@@ -43,7 +43,7 @@
 
 package org.jfree.date;
 
-import org.jfree.date.SerialDate.DayOfWeekConstants;
+import org.jfree.date.SerialDate.Day;
 
 /**
  * An annual date rule that returns a date for each year based on (a) a
@@ -72,7 +72,7 @@ public class RelativeDayOfWeekRule extends AnnualDateRule {
      * Default constructor - builds a rule for the Monday following 1 January.
      */
     public RelativeDayOfWeekRule() {
-        this(new DayAndMonthRule(), DayOfWeekConstants.MONDAY.get(), SerialDate.FOLLOWING);
+        this(new DayAndMonthRule(), Day.MONDAY.get(), SerialDate.FOLLOWING);
     }
 
     /**
@@ -190,15 +190,15 @@ public class RelativeDayOfWeekRule extends AnnualDateRule {
             switch (this.relative) {
                 case(SerialDate.PRECEDING):
                     result = SerialDate.getPreviousDayOfWeek(
-                            DayOfWeekConstants.from(this.dayOfWeek),
+                            Day.from(this.dayOfWeek),
                             base);
                     break;
                 case(SerialDate.NEAREST):
-                    result = SerialDate.getNearestDayOfWeek(DayOfWeekConstants.from(this.dayOfWeek),
+                    result = SerialDate.getNearestDayOfWeek(Day.from(this.dayOfWeek),
                             base);
                     break;
                 case(SerialDate.FOLLOWING):
-                    result = SerialDate.getFollowingDayOfWeek(DayOfWeekConstants.from(this.dayOfWeek),
+                    result = SerialDate.getFollowingDayOfWeek(Day.from(this.dayOfWeek),
                             base);
                     break;
                 default:

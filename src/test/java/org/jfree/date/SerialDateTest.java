@@ -56,8 +56,8 @@ import java.io.ObjectOutputStream;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.jfree.date.SerialDate.DayOfWeekConstants;
-import org.jfree.date.SerialDate.MonthConstants;
+import org.jfree.date.SerialDate.Day;
+import org.jfree.date.SerialDate.Month;
 
 /**
  * Some JUnit tests for the {@link SerialDate} class.
@@ -89,7 +89,7 @@ public class SerialDateTest extends TestCase {
      * Problem set up.
      */
     protected void setUp() {
-        this.nov9Y2001 = SerialDate.createInstance(9, MonthConstants.NOVEMBER.get(), 2001);
+        this.nov9Y2001 = SerialDate.createInstance(9, Month.NOVEMBER.get(), 2001);
     }
 
     /**
@@ -111,22 +111,22 @@ public class SerialDateTest extends TestCase {
      * A test case for a reported bug, now fixed.
      */
     public void testAddMonthsTo5Oct2003() {
-        final SerialDate d1 = SerialDate.createInstance(5, MonthConstants.OCTOBER.get(), 2003);
+        final SerialDate d1 = SerialDate.createInstance(5, Month.OCTOBER.get(), 2003);
         final SerialDate d2 = SerialDate.addMonths(2, d1);
-        assertEquals(d2, SerialDate.createInstance(5, MonthConstants.DECEMBER.get(), 2003));
+        assertEquals(d2, SerialDate.createInstance(5, Month.DECEMBER.get(), 2003));
     }
 
     public void testSubtractMonthsTo5Oct2003() {
-        final SerialDate d1 = SerialDate.createInstance(5, MonthConstants.OCTOBER.get(), 2003);
+        final SerialDate d1 = SerialDate.createInstance(5, Month.OCTOBER.get(), 2003);
         final SerialDate d2 = SerialDate.addMonths(-2, d1);
-        assertEquals(d2, SerialDate.createInstance(5, MonthConstants.AUGUST.get(), 2003));
+        assertEquals(d2, SerialDate.createInstance(5, Month.AUGUST.get(), 2003));
     }
 
     /**
      * A test case for a reported bug, now fixed.
      */
     public void testAddMonthsTo1Jan2003() {
-        final SerialDate d1 = SerialDate.createInstance(1, MonthConstants.JANUARY.get(), 2003);
+        final SerialDate d1 = SerialDate.createInstance(1, Month.JANUARY.get(), 2003);
         final SerialDate d2 = SerialDate.addMonths(0, d1);
         assertEquals(d2, d1);
     }
@@ -136,14 +136,14 @@ public class SerialDateTest extends TestCase {
      */
     public void testMondayPrecedingFriday9Nov2001() {
         SerialDate mondayBefore = SerialDate.getPreviousDayOfWeek(
-                DayOfWeekConstants.MONDAY, this.nov9Y2001
+                Day.MONDAY, this.nov9Y2001
         );
         assertEquals(5, mondayBefore.getDayOfMonth());
     }
 
     public void testFridayPrecedingFriday9Nov2001() {
         SerialDate mondayBefore = SerialDate.getPreviousDayOfWeek(
-                DayOfWeekConstants.FRIDAY, this.nov9Y2001
+                Day.FRIDAY, this.nov9Y2001
         );
         assertEquals(2, mondayBefore.getDayOfMonth());
     }
@@ -153,21 +153,21 @@ public class SerialDateTest extends TestCase {
      */
     public void testMondayFollowingFriday9Nov2001() {
         SerialDate mondayAfter = SerialDate.getFollowingDayOfWeek(
-                DayOfWeekConstants.MONDAY, this.nov9Y2001
+                Day.MONDAY, this.nov9Y2001
         );
         assertEquals(12, mondayAfter.getDayOfMonth());
     }
 
     public void testSaturdayFollowingFriday9Nov2001() {
         SerialDate mondayAfter = SerialDate.getFollowingDayOfWeek(
-                DayOfWeekConstants.SATURDAY, this.nov9Y2001
+                Day.SATURDAY, this.nov9Y2001
         );
         assertEquals(10, mondayAfter.getDayOfMonth());
     }
 
     public void testFridayFollowingFriday9Nov2001() {
         SerialDate mondayAfter = SerialDate.getFollowingDayOfWeek(
-                DayOfWeekConstants.FRIDAY, this.nov9Y2001
+                Day.FRIDAY, this.nov9Y2001
         );
         assertEquals(16, mondayAfter.getDayOfMonth());
     }
@@ -177,14 +177,14 @@ public class SerialDateTest extends TestCase {
      */
     public void testMondayNearestFriday9Nov2001() {
         SerialDate mondayNearest = SerialDate.getNearestDayOfWeek(
-                DayOfWeekConstants.MONDAY, this.nov9Y2001
+                Day.MONDAY, this.nov9Y2001
         );
         assertEquals(12, mondayNearest.getDayOfMonth());
     }
 
     public void testFridayNearestFriday9Nov2001() {
         SerialDate mondayNearest = SerialDate.getNearestDayOfWeek(
-                DayOfWeekConstants.FRIDAY, this.nov9Y2001
+                Day.FRIDAY, this.nov9Y2001
         );
         assertEquals(9, mondayNearest.getDayOfMonth());
     }
@@ -193,8 +193,8 @@ public class SerialDateTest extends TestCase {
      * The Monday nearest to 22nd January 1970 falls on the 19th.
      */
     public void testMondayNearest22Jan1970() {
-        SerialDate jan22Y1970 = SerialDate.createInstance(22, MonthConstants.JANUARY.get(), 1970);
-        SerialDate mondayNearest = SerialDate.getNearestDayOfWeek(DayOfWeekConstants.MONDAY, jan22Y1970);
+        SerialDate jan22Y1970 = SerialDate.createInstance(22, Month.JANUARY.get(), 1970);
+        SerialDate mondayNearest = SerialDate.getNearestDayOfWeek(Day.MONDAY, jan22Y1970);
         assertEquals(19, mondayNearest.getDayOfMonth());
     }
 
@@ -204,7 +204,7 @@ public class SerialDateTest extends TestCase {
      */
     public void testWeekdayCodeToString() {
 
-        final String test = SerialDate.weekdayCodeToString(DayOfWeekConstants.SATURDAY.get());
+        final String test = SerialDate.weekdayCodeToString(Day.SATURDAY.get());
         assertEquals("Saturday", test);
 
     }
@@ -216,16 +216,16 @@ public class SerialDateTest extends TestCase {
     public void testStringToWeekday() {
 
         int weekday = SerialDate.stringToWeekdayCode("Wednesday");
-        assertEquals(DayOfWeekConstants.WEDNESDAY.get(), weekday);
+        assertEquals(Day.WEDNESDAY.get(), weekday);
 
         weekday = SerialDate.stringToWeekdayCode(" Wednesday ");
-        assertEquals(DayOfWeekConstants.WEDNESDAY.get(), weekday);
+        assertEquals(Day.WEDNESDAY.get(), weekday);
 
         weekday = SerialDate.stringToWeekdayCode("Wed");
-        assertEquals(DayOfWeekConstants.WEDNESDAY.get(), weekday);
+        assertEquals(Day.WEDNESDAY.get(), weekday);
 
         weekday = SerialDate.stringToWeekdayCode("wed");
-        assertFalse(DayOfWeekConstants.WEDNESDAY.get() == weekday);
+        assertFalse(Day.WEDNESDAY.get() == weekday);
 
     }
 
@@ -236,13 +236,13 @@ public class SerialDateTest extends TestCase {
     public void testStringToMonthCode() {
 
         int m = SerialDate.stringToMonthCode("January");
-        assertEquals(MonthConstants.JANUARY.get(), m);
+        assertEquals(Month.JANUARY.get(), m);
 
         m = SerialDate.stringToMonthCode(" January ");
-        assertEquals(MonthConstants.JANUARY.get(), m);
+        assertEquals(Month.JANUARY.get(), m);
 
         m = SerialDate.stringToMonthCode("Jan");
-        assertEquals(MonthConstants.JANUARY.get(), m);
+        assertEquals(Month.JANUARY.get(), m);
 
     }
 
@@ -251,7 +251,7 @@ public class SerialDateTest extends TestCase {
      */
     public void testMonthCodeToStringCode() {
 
-        final String test = SerialDate.monthCodeToString(MonthConstants.DECEMBER);
+        final String test = SerialDate.monthCodeToString(Month.DECEMBER);
         assertEquals("December", test);
 
     }
@@ -364,7 +364,7 @@ public class SerialDateTest extends TestCase {
         assertEquals(30, d2.getDayOfMonth());
         assertEquals(6, d2.getMonth());
         assertEquals(2004, d2.getYYYY());
-        assertEquals(30, SerialDate.lastDayOfMonth(MonthConstants.JUNE, 2004));
+        assertEquals(30, SerialDate.lastDayOfMonth(Month.JUNE, 2004));
 
         SerialDate d3 = SerialDate.addMonths(2, d1);
         assertEquals(31, d3.getDayOfMonth());
