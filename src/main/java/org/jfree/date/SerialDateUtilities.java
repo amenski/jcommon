@@ -46,6 +46,8 @@
 
 package org.jfree.date;
 
+import org.jfree.date.SerialDate.DayOfWeekConstants;
+
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
@@ -113,25 +115,25 @@ public class SerialDateUtilities {
     public int stringToWeekday(final String s) {
 
         if (s.equals(this.weekdays[Calendar.SATURDAY])) {
-            return SerialDate.SATURDAY;
+            return DayOfWeekConstants.SATURDAY.get();
         }
         else if (s.equals(this.weekdays[Calendar.SUNDAY])) {
-            return SerialDate.SUNDAY;
+            return DayOfWeekConstants.SUNDAY.get();
         }
         else if (s.equals(this.weekdays[Calendar.MONDAY])) {
-            return SerialDate.MONDAY;
+            return DayOfWeekConstants.MONDAY.get();
         }
         else if (s.equals(this.weekdays[Calendar.TUESDAY])) {
-            return SerialDate.TUESDAY;
+            return DayOfWeekConstants.TUESDAY.get();
         }
         else if (s.equals(this.weekdays[Calendar.WEDNESDAY])) {
-            return SerialDate.WEDNESDAY;
+            return DayOfWeekConstants.WEDNESDAY.get();
         }
         else if (s.equals(this.weekdays[Calendar.THURSDAY])) {
-            return SerialDate.THURSDAY;
+            return DayOfWeekConstants.THURSDAY.get();
         }
         else {
-            return SerialDate.FRIDAY;
+            return DayOfWeekConstants.FRIDAY.get();
         }
 
     }

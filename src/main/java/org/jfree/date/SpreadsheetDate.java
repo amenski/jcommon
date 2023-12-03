@@ -55,6 +55,7 @@
 
 package org.jfree.date;
 
+import java.io.Serial;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -81,6 +82,7 @@ import java.util.Date;
 public class SpreadsheetDate extends SerialDate {
 
     /** For serialization. */
+    @Serial
     private static final long serialVersionUID = -2039586705374454461L;
     
     /** 
@@ -116,8 +118,8 @@ public class SpreadsheetDate extends SerialDate {
             );
         }
 
-        if ((month >= MonthConstants.JANUARY) 
-                && (month <= MonthConstants.DECEMBER)) {
+        if ((month >= MonthConstants.JANUARY.get())
+                && (month <= MonthConstants.DECEMBER.get())) {
             this.month = month;
         }
         else {
@@ -241,6 +243,10 @@ public class SpreadsheetDate extends SerialDate {
         return this.month;
     }
 
+    public MonthConstants getMonthConstant() {
+        return MonthConstants.from(this.month);
+    }
+
     /**
      * Returns the day of the month.
      *
@@ -278,13 +284,9 @@ public class SpreadsheetDate extends SerialDate {
     public boolean equals(final Object object) {
 
         if (object instanceof SerialDate) {
-            final SerialDate s = (SerialDate) object;
-            return (s.toSerial() == this.toSerial());
+            return ((SerialDate) object).toSerial() == this.toSerial();
         }
-        else {
-            return false;
-        }
-
+        return false;
     }
 
     /**
@@ -317,8 +319,8 @@ public class SpreadsheetDate extends SerialDate {
      * @return A negative integer, zero, or a positive integer as this object 
      *         is less than, equal to, or greater than the specified object.
      */
-    public int compareTo(final Object other) {
-        return compare((SerialDate) other);    
+    public int compareTo(final SerialDate other) {
+        return compare(other);
     }
     
     /**
@@ -449,13 +451,12 @@ public class SpreadsheetDate extends SerialDate {
     private int calcSerial(final int d, final int m, final int y) {
         final int yy = ((y - 1900) * 365) + SerialDate.leapYearCount(y - 1);
         int mm = SerialDate.AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH[m];
-        if (m > MonthConstants.FEBRUARY) {
+        if (m > MonthConstants.FEBRUARY.get()) {
             if (SerialDate.isLeapYear(y)) {
                 mm = mm + 1;
             }
         }
-        final int dd = d;
-        return yy + mm + dd + 1;
+        return yy + mm + d + 1;
     }
 
 }
