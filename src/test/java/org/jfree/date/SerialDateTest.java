@@ -56,8 +56,6 @@ import java.io.ObjectOutputStream;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.jfree.date.SerialDate.Day;
-import org.jfree.date.SerialDate.Month;
 
 /**
  * Some JUnit tests for the {@link SerialDate} class.
@@ -203,30 +201,23 @@ public class SerialDateTest extends TestCase {
      * result depends on the Locale so this test needs to be modified.
      */
     public void testWeekdayCodeToString() {
-
-        final String test = SerialDate.weekdayCodeToString(Day.SATURDAY.get());
-        assertEquals("Saturday", test);
-
+        assertEquals("Saturday", Day.SATURDAY.toString());
     }
 
     /**
-     * Test the conversion of a string to a weekday.  Note that this test will fail if the 
+     * Test the conversion of a string to a weekday.  Note that this test will fail if the
      * default locale doesn't use English weekday names...devise a better test!
      */
     public void testStringToWeekday() {
 
-        int weekday = SerialDate.stringToWeekdayCode("Wednesday");
-        assertEquals(Day.WEDNESDAY.get(), weekday);
+        Day weekday = Day.parse("Wednesday");
+        assertEquals(Day.WEDNESDAY, weekday);
 
-        weekday = SerialDate.stringToWeekdayCode(" Wednesday ");
-        assertEquals(Day.WEDNESDAY.get(), weekday);
+        weekday = Day.parse(" Wednesday ");
+        assertEquals(Day.WEDNESDAY, weekday);
 
-        weekday = SerialDate.stringToWeekdayCode("Wed");
-        assertEquals(Day.WEDNESDAY.get(), weekday);
-
-        weekday = SerialDate.stringToWeekdayCode("wed");
-        assertFalse(Day.WEDNESDAY.get() == weekday);
-
+        weekday = Day.parse("Wed");
+        assertEquals(Day.WEDNESDAY, weekday);
     }
 
     /**
@@ -235,14 +226,14 @@ public class SerialDateTest extends TestCase {
      */
     public void testStringToMonthCode() {
 
-        int m = SerialDate.stringToMonthCode("January");
-        assertEquals(Month.JANUARY.get(), m);
+        Month m = Month.parse("January");
+        assertEquals(Month.JANUARY, m);
 
-        m = SerialDate.stringToMonthCode(" January ");
-        assertEquals(Month.JANUARY.get(), m);
+        m = Month.parse(" January ");
+        assertEquals(Month.JANUARY, m);
 
-        m = SerialDate.stringToMonthCode("Jan");
-        assertEquals(Month.JANUARY.get(), m);
+        m = Month.parse("Jan");
+        assertEquals(Month.JANUARY, m);
 
     }
 
@@ -250,9 +241,7 @@ public class SerialDateTest extends TestCase {
      * Tests the conversion of a month code to a string.
      */
     public void testMonthCodeToStringCode() {
-
-        final String test = SerialDate.monthCodeToString(Month.DECEMBER);
-        assertEquals("December", test);
+        assertEquals("December", Month.DECEMBER.toString());
 
     }
 

@@ -45,8 +45,6 @@
 
 package org.jfree.date;
 
-import org.jfree.date.SerialDate.Month;
-
 /**
  * An annual date rule where the generated date always falls on the same day
  * and month each year.

@@ -58,7 +58,7 @@
 
 package org.jfree.date;
 
-import java.io.Serial;
+
 import java.io.Serializable;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -85,61 +85,14 @@ import java.util.GregorianCalendar;
  * @author David Gilbert
  */
 public abstract class SerialDate implements Comparable<SerialDate>, Serializable {
-
-    /** For serialization. */
-    @Serial
-    private static final long serialVersionUID = -293716040467423637L;
     
     /** Date format symbols. */
     public static final DateFormatSymbols
         DATE_FORMAT_SYMBOLS = new SimpleDateFormat().getDateFormatSymbols();
 
-    /** The serial number for 1 January 1900. */
-    public static final int SERIAL_LOWER_BOUND = 2;
-
-    /** The serial number for 31 December 9999. */
-    public static final int SERIAL_UPPER_BOUND = 2958465;
-
-    /** The lowest year value supported by this date format. */
-    public static final int MINIMUM_YEAR_SUPPORTED = 1900;
-
-    /** The highest year value supported by this date format. */
-    public static final int MAXIMUM_YEAR_SUPPORTED = 9999;
-
     /** The number of days in each month in non leap years. */
     static final int[] LAST_DAY_OF_MONTH =
         {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
-    /** The number of days in a (non-leap) year up to the end of each month. */
-    static final int[] AGGREGATE_DAYS_TO_END_OF_MONTH =
-        {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
-
-    /** The number of days in a year up to the end of the preceding month. */
-    static final int[] AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH =
-        {0, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
-
-    /** The number of days in a leap year up to the end of each month. */
-    static final int[] LEAP_YEAR_AGGREGATE_DAYS_TO_END_OF_MONTH =
-        {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366};
-
-    /** 
-     * The number of days in a leap year up to the end of the preceding month. 
-     */
-    static final int[] 
-        LEAP_YEAR_AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH =
-            {0, 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366};
-
-    /** A useful constant for referring to the first week in a month. */
-    public static final int FIRST_WEEK_IN_MONTH = 1;
-
-    /** A useful constant for referring to the second week in a month. */
-    public static final int SECOND_WEEK_IN_MONTH = 2;
-
-    /** A useful constant for referring to the third week in a month. */
-    public static final int THIRD_WEEK_IN_MONTH = 3;
-
-    /** A useful constant for referring to the fourth week in a month. */
-    public static final int FOURTH_WEEK_IN_MONTH = 4;
 
     /** A useful constant for referring to the last week in a month. */
     public static final int LAST_WEEK_IN_MONTH = 0;
@@ -190,45 +143,6 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
     }
 
     /**
-     * Converts the supplied string to a day of the week.
-     *
-     * @param s  a string representing the day of the week.
-     *
-     * @return <code>-1</code> if the string is not convertable, the day of 
-     *         the week otherwise.
-     */
-    public static int stringToWeekdayCode(String s) {
-
-        final String[] shortWeekdayNames = DATE_FORMAT_SYMBOLS.getShortWeekdays();
-        final String[] weekDayNames = DATE_FORMAT_SYMBOLS.getWeekdays();
-
-        s = s.trim();
-        for (int i = 0; i < weekDayNames.length; i++) {
-            if (s.equals(shortWeekdayNames[i]) || s.equals(weekDayNames[i])) {
-                return i;
-            }
-        }
-        return -1;
-
-    }
-
-    /**
-     * Returns a string representing the supplied day-of-the-week.
-     * <P>
-     * Need to find a better approach.
-     *
-     * @param weekday  the day of the week.
-     *
-     * @return a string representing the supplied day-of-the-week.
-     */
-    public static String weekdayCodeToString(final int weekday) {
-
-        final String[] weekdays = DATE_FORMAT_SYMBOLS.getWeekdays();
-        return weekdays[weekday];
-
-    }
-
-    /**
      * Returns an array of month names.
      *
      * @return an array of month names.
@@ -256,76 +170,6 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
             return DATE_FORMAT_SYMBOLS.getMonths();
         }
 
-    }
-
-    /**
-     * Returns a string representing the supplied month.
-     * <P>
-     * The string returned is the long form of the month name taken from the 
-     * default locale.
-     *
-     * @param month  the month.
-     *
-     * @return a string representing the supplied month.
-     */
-    public static String monthCodeToString(final Month month) {
-
-        return monthCodeToString(month, false);
-
-    }
-
-    /**
-     * Returns a string representing the supplied month.
-     * <P>
-     * The string returned is the long or short form of the month name taken 
-     * from the default locale.
-     *
-     * @param month  the month.
-     * @param shortened  if <code>true</code> return the abbreviation of the 
-     *                   month.
-     *
-     * @return a string representing the supplied month.
-     */
-    public static String monthCodeToString(final Month month,
-                                           final boolean shortened) {
-        final String[] months;
-
-        if (shortened) {
-            months = DATE_FORMAT_SYMBOLS.getShortMonths();
-        }
-        else {
-            months = DATE_FORMAT_SYMBOLS.getMonths();
-        }
-
-        return months[month.get() - 1];
-
-    }
-
-    /**
-     * Converts a string to a month code.
-     * <P>
-     * This method will return one of the constants JANUARY, FEBRUARY, ..., 
-     * DECEMBER that corresponds to the string.  If the string is not 
-     * recognised, this method returns -1.
-     *
-     * @param s  the string to parse.
-     *
-     * @return <code>-1</code> if the string is not parseable, the month of the
-     *         year otherwise.
-     */
-    public static int stringToMonthCode(String s) {
-        if (s.isBlank()) return -1;
-
-        final String[] shortMonthNames = DATE_FORMAT_SYMBOLS.getShortMonths();
-        final String[] monthNames = DATE_FORMAT_SYMBOLS.getMonths();
-
-        s = s.trim();
-        for (int i = 0; i < monthNames.length; i++) {
-            if (s.equals(shortMonthNames[i]) || s.equals(monthNames[i])) {
-                return i + 1;
-            }
-        }
-        return -1;
     }
 
     /**
@@ -533,48 +377,6 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
     }
 
     /**
-     * Returns a string corresponding to the week-in-the-month code.
-     * <P>
-     * Need to find a better approach.
-     *
-     * @param count  an integer code representing the week-in-the-month.
-     *
-     * @return a string corresponding to the week-in-the-month code.
-     */
-    public static String weekInMonthToString(final int count) {
-
-        return switch (count) {
-            case SerialDate.FIRST_WEEK_IN_MONTH -> "First";
-            case SerialDate.SECOND_WEEK_IN_MONTH -> "Second";
-            case SerialDate.THIRD_WEEK_IN_MONTH -> "Third";
-            case SerialDate.FOURTH_WEEK_IN_MONTH -> "Fourth";
-            case SerialDate.LAST_WEEK_IN_MONTH -> "Last";
-            default -> "SerialDate.weekInMonthToString(): invalid code.";
-        };
-
-    }
-
-    /**
-     * Returns a string representing the supplied 'relative'.
-     * <P>
-     * Need to find a better approach.
-     *
-     * @param relative  a constant representing the 'relative'.
-     *
-     * @return a string representing the supplied 'relative'.
-     */
-    public static String relativeToString(final int relative) {
-
-        return switch (relative) {
-            case SerialDate.PRECEDING -> "Preceding";
-            case SerialDate.NEAREST -> "Nearest";
-            case SerialDate.FOLLOWING -> "Following";
-            default -> "ERROR : Relative To String";
-        };
-
-    }
-
-    /**
      * Factory method that returns an instance of some concrete subclass of 
      * {@link SerialDate}.
      *
@@ -662,7 +464,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * @return  a string representation of the date.
      */
     public String toString() {
-        return getDayOfMonth() + "-" + SerialDate.monthCodeToString(Month.from(getMonth()))
+        return getDayOfMonth() + "-" +  Month.from(getMonth())
                                + "-" + getYYYY();
     }
 
@@ -834,65 +636,5 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      */
     public SerialDate getNearestDayOfWeek(final int targetDOW) {
         return getNearestDayOfWeek(Day.from(targetDOW), this);
-    }
-
-
-    public enum Month {
-        JANUARY(1),
-        FEBRUARY(2),
-        MARCH(3),
-        APRIL(4),
-        MAY(5),
-        JUNE(6),
-        JULY(7),
-        AUGUST(8),
-        SEPTEMBER(9),
-        OCTOBER(10),
-        NOVEMBER(11),
-        DECEMBER(12);
-
-        private final int monthNumber;
-
-        Month(int monthNumber) {
-            this.monthNumber = monthNumber;
-        }
-
-        public int get() {
-            return monthNumber;
-        }
-
-        public static Month from(int monthNumber) {
-            for(Month m : Month.values()) {
-                if(monthNumber == m.monthNumber) return m;
-            }
-            throw new IllegalArgumentException("MonthConstants: Invalid value for month");
-        }
-    }
-
-    public enum Day {
-        SUNDAY(1),
-        MONDAY(2),
-        TUESDAY(3),
-        WEDNESDAY(4),
-        THURSDAY(5),
-        FRIDAY(6),
-        SATURDAY(7);
-
-        private final int dayNumber;
-
-        Day(int dayNumber) {
-            this.dayNumber = dayNumber;
-        }
-
-        public int get() {
-            return dayNumber;
-        }
-
-        public static Day from(int dayNumber) {
-            for(Day d : Day.values()) {
-                if(dayNumber == d.dayNumber) return d;
-            }
-            throw new IllegalArgumentException("DayOfWeekConstants: Invalid value for day-of-week");
-        }
     }
 }

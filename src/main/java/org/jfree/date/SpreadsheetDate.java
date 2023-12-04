@@ -55,7 +55,6 @@
 
 package org.jfree.date;
 
-import java.io.Serial;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -81,10 +80,6 @@ import java.util.Date;
  */
 public class SpreadsheetDate extends SerialDate {
 
-    /** For serialization. */
-    @Serial
-    private static final long serialVersionUID = -2039586705374454461L;
-
     /** The day of the month (1 to 28, 29, 30 or 31 depending on the month). */
     private final int day;
 
@@ -93,6 +88,23 @@ public class SpreadsheetDate extends SerialDate {
 
     /** The year (1900 to 9999). */
     private final int year;
+
+    /** The serial number for 1 January 1900. */
+    public static final int SERIAL_LOWER_BOUND = 2;
+
+    /** The serial number for 31 December 9999. */
+    public static final int SERIAL_UPPER_BOUND = 2958465;
+
+    /** The number of days in a year up to the end of the preceding month. */
+    static final int[] AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH =
+            {0, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
+
+    /**
+     * The number of days in a leap year up to the end of the preceding month.
+     */
+    static final int[]
+            LEAP_YEAR_AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH =
+            {0, 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366};
 
     /**
      * Creates a new date instance.
@@ -404,7 +416,7 @@ public class SpreadsheetDate extends SerialDate {
      */
     private int calcSerial(final int d, final int m, final int y) {
         final int yy = ((y - 1900) * 365) + SerialDate.leapYearCount(y - 1);
-        int mm = SerialDate.AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH[m];
+        int mm = AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH[m];
         if (m > Month.FEBRUARY.get()) {
             if (SerialDate.isLeapYear(y)) {
                 mm = mm + 1;

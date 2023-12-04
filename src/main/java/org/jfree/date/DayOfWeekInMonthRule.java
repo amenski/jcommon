@@ -44,9 +44,6 @@
 
 package org.jfree.date;
 
-import org.jfree.date.SerialDate.Day;
-import org.jfree.date.SerialDate.Month;
-
 /**
  * An annual date rule that specifies the nth day of the week in a given month
  * (for example, the third Wednesday in June, or the last Friday in November).

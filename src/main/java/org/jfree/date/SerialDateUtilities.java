@@ -46,9 +46,6 @@
 
 package org.jfree.date;
 
-import org.jfree.date.SerialDate.Day;
-import org.jfree.date.SerialDate.Month;
-
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 

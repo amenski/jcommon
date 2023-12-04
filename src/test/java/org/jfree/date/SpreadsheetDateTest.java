@@ -44,18 +44,11 @@
 
 package org.jfree.date;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.jfree.date.SerialDate.Day;
-import org.jfree.date.SerialDate.Month;
+
+import java.io.*;
 
 /**
  * Tests for the {@link SpreadsheetDate} class.

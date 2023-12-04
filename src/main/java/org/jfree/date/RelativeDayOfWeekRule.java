@@ -43,8 +43,6 @@
 
 package org.jfree.date;
 
-import org.jfree.date.SerialDate.Day;
-
 /**
  * An annual date rule that returns a date for each year based on (a) a
  * reference rule; (b) a day of the week; and (c) a selection parameter
@@ -67,6 +65,12 @@ public class RelativeDayOfWeekRule extends AnnualDateRule {
 
     /** Specifies which day of the week (PRECEDING, NEAREST or FOLLOWING). */
     private int relative;
+
+    /** The lowest year value supported by this date format. */
+    public static final int MINIMUM_YEAR_SUPPORTED = 1900;
+
+    /** The highest year value supported by this date format. */
+    public static final int MAXIMUM_YEAR_SUPPORTED = 9999;
 
     /**
      * Default constructor - builds a rule for the Monday following 1 January.
@@ -176,8 +180,8 @@ public class RelativeDayOfWeekRule extends AnnualDateRule {
     public SerialDate getDate(final int year) {
 
         // check argument...
-        if ((year < SerialDate.MINIMUM_YEAR_SUPPORTED)
-            || (year > SerialDate.MAXIMUM_YEAR_SUPPORTED)) {
+        if ((year < MINIMUM_YEAR_SUPPORTED)
+            || (year > MAXIMUM_YEAR_SUPPORTED)) {
             throw new IllegalArgumentException(
                 "RelativeDayOfWeekRule.getDate(): year outside valid range.");
         }
