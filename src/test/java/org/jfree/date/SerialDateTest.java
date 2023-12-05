@@ -87,21 +87,21 @@ public class SerialDateTest extends TestCase {
      * Problem set up.
      */
     protected void setUp() {
-        this.nov9Y2001 = SerialDate.createInstance(9, Month.NOVEMBER.get(), 2001);
+        this.nov9Y2001 = SerialDateFactory.createInstance(9, Month.NOVEMBER.toInt(), 2001);
     }
 
     /**
      * 9 Nov 2001 plus two months should be 9 Jan 2002.
      */
     public void testAddMonthsTo9Nov2001() {
-        final SerialDate jan9Y2002 = SerialDate.addMonths(2, this.nov9Y2001);
-        final SerialDate answer = SerialDate.createInstance(9, 1, 2002);
+        final SerialDate jan9Y2002 = this.nov9Y2001.plusMonths(2);
+        final SerialDate answer = SerialDateFactory.createInstance(9, 1, 2002);
         assertEquals(answer, jan9Y2002);
     }
 
     public void testAddMonthsTo9Nov2001_negative() {
-        final SerialDate jan9Y2002 = SerialDate.addMonths(-2, this.nov9Y2001);
-        final SerialDate answer = SerialDate.createInstance(9, 9, 2001);
+        final SerialDate jan9Y2002 = this.nov9Y2001.plusMonths(-2);
+        final SerialDate answer = SerialDateFactory.createInstance(9, 9, 2001);
         assertEquals(answer, jan9Y2002);
     }
 
@@ -109,23 +109,23 @@ public class SerialDateTest extends TestCase {
      * A test case for a reported bug, now fixed.
      */
     public void testAddMonthsTo5Oct2003() {
-        final SerialDate d1 = SerialDate.createInstance(5, Month.OCTOBER.get(), 2003);
-        final SerialDate d2 = SerialDate.addMonths(2, d1);
-        assertEquals(d2, SerialDate.createInstance(5, Month.DECEMBER.get(), 2003));
+        final SerialDate d1 = SerialDateFactory.createInstance(5, Month.OCTOBER.toInt(), 2003);
+        final SerialDate d2 = d1.plusMonths(2);
+        assertEquals(d2, SerialDateFactory.createInstance(5, Month.DECEMBER.toInt(), 2003));
     }
 
     public void testSubtractMonthsTo5Oct2003() {
-        final SerialDate d1 = SerialDate.createInstance(5, Month.OCTOBER.get(), 2003);
-        final SerialDate d2 = SerialDate.addMonths(-2, d1);
-        assertEquals(d2, SerialDate.createInstance(5, Month.AUGUST.get(), 2003));
+        final SerialDate d1 = SerialDateFactory.createInstance(5, Month.OCTOBER.toInt(), 2003);
+        final SerialDate d2 = d1.plusMonths(-2);
+        assertEquals(d2, SerialDateFactory.createInstance(5, Month.AUGUST.toInt(), 2003));
     }
 
     /**
      * A test case for a reported bug, now fixed.
      */
     public void testAddMonthsTo1Jan2003() {
-        final SerialDate d1 = SerialDate.createInstance(1, Month.JANUARY.get(), 2003);
-        final SerialDate d2 = SerialDate.addMonths(0, d1);
+        final SerialDate d1 = SerialDateFactory.createInstance(1, Month.JANUARY.toInt(), 2003);
+        final SerialDate d2 = d1.plusMonths(0);
         assertEquals(d2, d1);
     }
 
@@ -133,16 +133,12 @@ public class SerialDateTest extends TestCase {
      * Monday preceding Friday 9 November 2001 should be 5 November.
      */
     public void testMondayPrecedingFriday9Nov2001() {
-        SerialDate mondayBefore = SerialDate.getPreviousDayOfWeek(
-                Day.MONDAY, this.nov9Y2001
-        );
+        SerialDate mondayBefore = this.nov9Y2001.getPreviousDayOfWeek(Day.MONDAY);
         assertEquals(5, mondayBefore.getDayOfMonth());
     }
 
     public void testFridayPrecedingFriday9Nov2001() {
-        SerialDate mondayBefore = SerialDate.getPreviousDayOfWeek(
-                Day.FRIDAY, this.nov9Y2001
-        );
+        SerialDate mondayBefore = this.nov9Y2001.getPreviousDayOfWeek(Day.FRIDAY);
         assertEquals(2, mondayBefore.getDayOfMonth());
     }
 
@@ -150,22 +146,22 @@ public class SerialDateTest extends TestCase {
      * Monday following Friday 9 November 2001 should be 12 November.
      */
     public void testMondayFollowingFriday9Nov2001() {
-        SerialDate mondayAfter = SerialDate.getFollowingDayOfWeek(
-                Day.MONDAY, this.nov9Y2001
+        SerialDate mondayAfter = this.nov9Y2001.getFollowingDayOfWeek(
+                Day.MONDAY
         );
         assertEquals(12, mondayAfter.getDayOfMonth());
     }
 
     public void testSaturdayFollowingFriday9Nov2001() {
-        SerialDate mondayAfter = SerialDate.getFollowingDayOfWeek(
-                Day.SATURDAY, this.nov9Y2001
+        SerialDate mondayAfter = this.nov9Y2001.getFollowingDayOfWeek(
+                Day.SATURDAY
         );
         assertEquals(10, mondayAfter.getDayOfMonth());
     }
 
     public void testFridayFollowingFriday9Nov2001() {
-        SerialDate mondayAfter = SerialDate.getFollowingDayOfWeek(
-                Day.FRIDAY, this.nov9Y2001
+        SerialDate mondayAfter = this.nov9Y2001.getFollowingDayOfWeek(
+                Day.FRIDAY
         );
         assertEquals(16, mondayAfter.getDayOfMonth());
     }
@@ -174,15 +170,15 @@ public class SerialDateTest extends TestCase {
      * Monday nearest Friday 9 November 2001 should be 12 November.
      */
     public void testMondayNearestFriday9Nov2001() {
-        SerialDate mondayNearest = SerialDate.getNearestDayOfWeek(
-                Day.MONDAY, this.nov9Y2001
+        SerialDate mondayNearest = this.nov9Y2001.getNearestDayOfWeek(
+                Day.MONDAY
         );
         assertEquals(12, mondayNearest.getDayOfMonth());
     }
 
     public void testFridayNearestFriday9Nov2001() {
-        SerialDate mondayNearest = SerialDate.getNearestDayOfWeek(
-                Day.FRIDAY, this.nov9Y2001
+        SerialDate mondayNearest = this.nov9Y2001.getNearestDayOfWeek(
+                Day.FRIDAY
         );
         assertEquals(9, mondayNearest.getDayOfMonth());
     }
@@ -191,8 +187,8 @@ public class SerialDateTest extends TestCase {
      * The Monday nearest to 22nd January 1970 falls on the 19th.
      */
     public void testMondayNearest22Jan1970() {
-        SerialDate jan22Y1970 = SerialDate.createInstance(22, Month.JANUARY.get(), 1970);
-        SerialDate mondayNearest = SerialDate.getNearestDayOfWeek(Day.MONDAY, jan22Y1970);
+        SerialDate jan22Y1970 = SerialDateFactory.createInstance(22, Month.JANUARY.toInt(), 1970);
+        SerialDate mondayNearest = jan22Y1970.getNearestDayOfWeek(Day.MONDAY);
         assertEquals(19, mondayNearest.getDayOfMonth());
     }
 
@@ -299,7 +295,7 @@ public class SerialDateTest extends TestCase {
      */
     public void testSerialization() {
 
-        SerialDate d1 = SerialDate.createInstance(15, 4, 2000);
+        SerialDate d1 = SerialDateFactory.createInstance(15, 4, 2000);
         SerialDate d2 = null;
 
         try {
@@ -323,66 +319,66 @@ public class SerialDateTest extends TestCase {
      * A test for bug report 1096282 (now fixed).
      */
     public void test1096282() {
-        SerialDate d = SerialDate.createInstance(29, 2, 2004);
-        d = SerialDate.addYears(1, d);
-        SerialDate expected = SerialDate.createInstance(28, 2, 2005);
+        SerialDate d = SerialDateFactory.createInstance(29, 2, 2004);
+        d = d.plusYears(1);
+        SerialDate expected = SerialDateFactory.createInstance(28, 2, 2005);
         assertTrue(d.isOn(expected));
     }
 
     public void test1096282_1() {
-        SerialDate d = SerialDate.createInstance(29, 2, 2004);
-        d = SerialDate.addYears(4, d);
-        SerialDate expected = SerialDate.createInstance(29, 2, 2008);
+        SerialDate d = SerialDateFactory.createInstance(29, 2, 2004);
+        d = d.plusYears(4);
+        SerialDate expected = SerialDateFactory.createInstance(29, 2, 2008);
         assertTrue(d.isOn(expected));
     }
 
     public void test1096282_2() {
-        SerialDate d = SerialDate.createInstance(29, 2, 1904);
-        d = SerialDate.addYears(0, d);
-        SerialDate expected = SerialDate.createInstance(29, 2, 1904);
+        SerialDate d = SerialDateFactory.createInstance(29, 2, 1904);
+        d = d.plusYears(0);
+        SerialDate expected = SerialDateFactory.createInstance(29, 2, 1904);
         assertTrue(d.isOn(expected));
     }
 
     /**
-     * Miscellaneous tests for the addMonths() method.
+     * Miscellaneous tests for the plusMonths() method.
      */
     public void testAddMonths() {
-        SerialDate d1 = SerialDate.createInstance(31, 5, 2004);
+        SerialDate d1 = SerialDateFactory.createInstance(31, 5, 2004);
         
-        SerialDate d2 = SerialDate.addMonths(1, d1);
+        SerialDate d2 = d1.plusMonths(1);
         assertEquals(30, d2.getDayOfMonth());
         assertEquals(6, d2.getMonth());
-        assertEquals(2004, d2.getYYYY());
+        assertEquals(2004, d2.getYear());
         assertEquals(30, SerialDate.lastDayOfMonth(Month.JUNE, 2004));
 
-        SerialDate d3 = SerialDate.addMonths(2, d1);
+        SerialDate d3 = d1.plusMonths(2);
         assertEquals(31, d3.getDayOfMonth());
         assertEquals(7, d3.getMonth());
-        assertEquals(2004, d3.getYYYY());
+        assertEquals(2004, d3.getYear());
         
-        SerialDate d4 = SerialDate.addMonths(1, SerialDate.addMonths(1, d1));
+        SerialDate d4 = d1.plusMonths(1).plusMonths(1);
         assertEquals(30, d4.getDayOfMonth());
         assertEquals(7, d4.getMonth());
-        assertEquals(2004, d4.getYYYY());
+        assertEquals(2004, d4.getYear());
     }
 
     public void testisOnOrAfter() {
-        SerialDate d1 = SerialDate.createInstance(31, 5, 2004);
-        SerialDate d2 = SerialDate.createInstance(30, 5, 2004);
+        SerialDate d1 = SerialDateFactory.createInstance(31, 5, 2004);
+        SerialDate d2 = SerialDateFactory.createInstance(30, 5, 2004);
         assertTrue(d1.isOnOrAfter(d2));
     }
 
     public void testisOnOrAfter_fail() {
-        SerialDate d1 = SerialDate.createInstance(29, 4, 2004);
-        SerialDate d2 = SerialDate.createInstance(30, 5, 2004);
+        SerialDate d1 = SerialDateFactory.createInstance(29, 4, 2004);
+        SerialDate d2 = SerialDateFactory.createInstance(30, 5, 2004);
         assertFalse(d1.isOnOrAfter(d2));
     }
 
 
     public void testisInRange() {
-        SerialDate d1 = SerialDate.createInstance(31, 5, 2004);
-        SerialDate d2 = SerialDate.createInstance(30, 5, 2004);
-        SerialDate d3 = SerialDate.createInstance(30, 6, 2004);
+        SerialDate d1 = SerialDateFactory.createInstance(31, 5, 2004);
+        SerialDate d2 = SerialDateFactory.createInstance(30, 5, 2004);
+        SerialDate d3 = SerialDateFactory.createInstance(30, 6, 2004);
         assertTrue(d1.isInRange(d2,d3));
     }
 }

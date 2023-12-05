@@ -113,25 +113,25 @@ public class SerialDateUtilities {
     public int stringToWeekday(final String s) {
 
         if (s.equals(this.weekdays[Calendar.SATURDAY])) {
-            return Day.SATURDAY.get();
+            return Day.SATURDAY.toInt();
         }
         else if (s.equals(this.weekdays[Calendar.SUNDAY])) {
-            return Day.SUNDAY.get();
+            return Day.SUNDAY.toInt();
         }
         else if (s.equals(this.weekdays[Calendar.MONDAY])) {
-            return Day.MONDAY.get();
+            return Day.MONDAY.toInt();
         }
         else if (s.equals(this.weekdays[Calendar.TUESDAY])) {
-            return Day.TUESDAY.get();
+            return Day.TUESDAY.toInt();
         }
         else if (s.equals(this.weekdays[Calendar.WEDNESDAY])) {
-            return Day.WEDNESDAY.get();
+            return Day.WEDNESDAY.toInt();
         }
         else if (s.equals(this.weekdays[Calendar.THURSDAY])) {
-            return Day.THURSDAY.get();
+            return Day.THURSDAY.toInt();
         }
         else {
-            return Day.FRIDAY.get();
+            return Day.FRIDAY.toInt();
         }
 
     }
@@ -171,10 +171,10 @@ public class SerialDateUtilities {
         if (start.isBefore(end)) {  // check the order of the dates
             d1 = start.getDayOfMonth();
             m1 = start.getMonth();
-            y1 = start.getYYYY();
+            y1 = start.getYear();
             d2 = end.getDayOfMonth();
             m2 = end.getMonth();
-            y2 = end.getYYYY();
+            y2 = end.getYear();
             return 360 * (y2 - y1) + 30 * (m2 - m1) + (d2 - d1);
         }
         else {
@@ -207,13 +207,13 @@ public class SerialDateUtilities {
         if (start.isBefore(end)) {
             d1 = start.getDayOfMonth();
             m1 = start.getMonth();
-            y1 = start.getYYYY();
+            y1 = start.getYear();
             if (d1 == 31) {  // first ISDA adjustment
                 d1 = 30;
             }
             d2 = end.getDayOfMonth();
             m2 = end.getMonth();
-            y2 = end.getYYYY();
+            y2 = end.getYear();
             if ((d2 == 31) && (d1 == 30)) {  // second ISDA adjustment
                 d2 = 30;
             }
@@ -251,7 +251,7 @@ public class SerialDateUtilities {
         if (start.isOnOrBefore(end)) { // check the order of the dates
             d1 = start.getDayOfMonth();
             m1 = start.getMonth();
-            y1 = start.getYYYY();
+            y1 = start.getYear();
 
             if (SerialDateUtilities.isLastDayOfFebruary(start)) {
                 d1 = 30;
@@ -262,7 +262,7 @@ public class SerialDateUtilities {
             }
             d2 = end.getDayOfMonth();
             m2 = end.getMonth();
-            y2 = end.getYYYY();
+            y2 = end.getYear();
             if ((d2 == 31) && (d1 == 30)) {  // second PSA adjustment
                 d2 = 30;
             }
@@ -298,13 +298,13 @@ public class SerialDateUtilities {
         if (start.isBefore(end)) {
             d1 = start.getDayOfMonth();
             m1 = start.getMonth();
-            y1 = start.getYYYY();
+            y1 = start.getYear();
             if (d1 == 31) {  // first European adjustment
                 d1 = 30;
             }
             d2 = end.getDayOfMonth();
             m2 = end.getMonth();
-            y2 = end.getYYYY();
+            y2 = end.getYear();
             if (d2 == 31) {  // first European adjustment
                 d2 = 30;
             }
@@ -332,7 +332,7 @@ public class SerialDateUtilities {
         final int dom;
         if (d.getMonthConstant() == Month.FEBRUARY) {
             dom = d.getDayOfMonth();
-            if (SerialDate.isLeapYear(d.getYYYY())) {
+            if (SerialDate.isLeapYear(d.getYear())) {
                 return (dom == 29);
             }
             else {
@@ -344,45 +344,4 @@ public class SerialDateUtilities {
         }
 
     }
-
-    /**
-     * Returns the number of times that February 29 falls within the specified
-     * date range.  The result needs to correspond to the ACT/365 (Japanese)
-     * day-count convention. The difficult cases are where the start or the
-     * end date is Feb 29 (include or not?).  Need to find out how JGBs do this
-     * (since this is where the ACT/365 (Japanese) convention comes from ...
-     *
-     * @param start  the start date.
-     * @param end  the end date.
-     *
-     * @return the number of times that February 29 occurs within the date
-     *      range.
-     */
-    public static int countFeb29s(final SerialDate start, final SerialDate end) {
-        int count = 0;
-        SerialDate feb29;
-        final int y1;
-        final int y2;
-        int year;
-
-        // check the order of the dates
-        if (start.isBefore(end)) {
-
-            y1 = start.getYYYY();
-            y2 = end.getYYYY();
-            for (year = y1; year == y2; year++) {
-                if (SerialDate.isLeapYear(year)) {
-                    feb29 = SerialDate.createInstance(29, Month.FEBRUARY.get(), year);
-                    if (feb29.isInRange(start, end, SerialDate.INCLUDE_SECOND)) {
-                        count++;
-                    }
-                }
-            }
-            return count;
-        }
-        else {
-            return countFeb29s(end, start);
-        }
-    }
-
 }

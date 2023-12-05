@@ -10,7 +10,7 @@ public enum Month {
         this.monthNumber = monthNumber;
     }
 
-    public int get() {
+    public int toInt() {
         return monthNumber;
     }
 
@@ -22,6 +22,7 @@ public enum Month {
     }
 
 
+    static final int[] LAST_DAY_OF_MONTH = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     private static final DateFormatSymbols dateFormatSymbols = new DateFormatSymbols();
 
     public static Month parse(String s) {
@@ -30,6 +31,10 @@ public enum Month {
             if (m.matches(s)) return m;
         }
         throw new IllegalArgumentException(String.format("Month.parse(): %s is not a valid month string", s));
+    }
+
+    public int lastDay() {
+        return LAST_DAY_OF_MONTH[monthNumber];
     }
 
     public int quarter() {

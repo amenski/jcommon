@@ -65,7 +65,7 @@ public class DayOfWeekInMonthRule extends AnnualDateRule {
      * Default constructor: builds a rule for the first Monday in January by default.
      */
     public DayOfWeekInMonthRule() {
-        this(1, Day.MONDAY.get(), Month.JANUARY.get());
+        this(1, Day.MONDAY.toInt(), Month.JANUARY.toInt());
     }
 
     /**
@@ -146,19 +146,19 @@ public class DayOfWeekInMonthRule extends AnnualDateRule {
         SerialDate result;
         if (this.count != SerialDate.LAST_WEEK_IN_MONTH) {
             // start at the beginning of the month
-            result = SerialDate.createInstance(1, this.month, year);
+            result = SerialDateFactory.createInstance(1, this.month, year);
             while (result.getDayOfWeek() != this.dayOfWeek) {
-                result = SerialDate.addDays(1, result);
+                result = result.plusDays(1);
             }
-            result = SerialDate.addDays(7 * (this.count - 1), result);
+            result = result.plusDays(7 * (this.count - 1));
 
         }
         else {
             // start at the end of the month and work backwards...
-            result = SerialDate.createInstance(1, this.month, year);
+            result = SerialDateFactory.createInstance(1, this.month, year);
             result = result.getEndOfCurrentMonth(result);
             while (result.getDayOfWeek() != this.dayOfWeek) {
-                result = SerialDate.addDays(-1, result);
+                result = result.plusDays(-1);
             }
 
         }

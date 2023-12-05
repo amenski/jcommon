@@ -50,10 +50,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -62,6 +59,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import org.jfree.date.SerialDate;
+import org.jfree.date.SerialDateFactory;
 
 /**
  * A panel that allows the user to select a date.
@@ -119,7 +117,7 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
      */
     public SerialDateChooserPanel() {
 
-        this(SerialDate.createInstance(new Date()), false,
+        this(SerialDateFactory.createInstance(new Date()), false,
              DEFAULT_DATE_BUTTON_COLOR,
              DEFAULT_MONTH_BUTTON_COLOR);
 
@@ -197,8 +195,8 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
 
         if (e.getActionCommand().equals("monthSelectionChanged")) {
             final JComboBox c = (JComboBox) e.getSource();
-            this.date = SerialDate.createInstance(
-                this.date.getDayOfMonth(), c.getSelectedIndex() + 1, this.date.getYYYY()
+            this.date = SerialDateFactory.createInstance(
+                this.date.getDayOfMonth(), c.getSelectedIndex() + 1, this.date.getYear()
             );
             refreshButtons();
         }
@@ -206,7 +204,7 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
             if (!this.refreshing) {
                 final JComboBox c = (JComboBox) e.getSource();
                 final Integer y = (Integer) c.getSelectedItem();
-                this.date = SerialDate.createInstance(
+                this.date = SerialDateFactory.createInstance(
                     this.date.getDayOfMonth(), this.date.getMonth(), y.intValue()
                 );
                 refreshYearSelector();
@@ -214,13 +212,13 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
             }
         }
         else if (e.getActionCommand().equals("todayButtonClicked")) {
-            setDate(SerialDate.createInstance(new Date()));
+            setDate(SerialDateFactory.createInstance(new Date()));
         }
         else if (e.getActionCommand().equals("dateButtonClicked")) {
             final JButton b = (JButton) e.getSource();
             final int i = Integer.parseInt(b.getName());
             final SerialDate first = getFirstVisibleDate();
-            final SerialDate selected = SerialDate.addDays(i, first);
+            final SerialDate selected = first.plusDays(i);
             setDate(selected);
         }
 
@@ -288,10 +286,10 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
      */
     protected SerialDate getFirstVisibleDate() {
 
-        SerialDate result = SerialDate.createInstance(1, this.date.getMonth(), this.date.getYYYY());
-        result = SerialDate.addDays(-1, result);
+        SerialDate result = SerialDateFactory.createInstance(1, this.date.getMonth(), this.date.getYear());
+        result = result.plusDays(-1);
         while (result.getDayOfWeek() != getFirstDayOfWeek()) {
-            result = SerialDate.addDays(-1, result);
+            result = result.plusDays(-1);
         }
         return result;
 
@@ -316,7 +314,7 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
             final JButton button = this.buttons[i];
             button.setText(String.valueOf(current.getDayOfWeek()));
             button.setBackground(getButtonColor(current));
-            current = SerialDate.addDays(1, current);
+            current = current.plusDays(1);
         }
 
     }
@@ -329,11 +327,11 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
         if (!this.refreshing) {
             this.refreshing = true;
             this.yearSelector.removeAllItems();
-            final Vector v = getYears(this.date.getYYYY());
+            final Vector v = getYears(this.date.getYear());
             for (Enumeration e = v.elements(); e.hasMoreElements();) {
                 this.yearSelector.addItem(e.nextElement());
             }
-            this.yearSelector.setSelectedItem(new Integer(this.date.getYYYY()));
+            this.yearSelector.setSelectedItem(new Integer(this.date.getYear()));
             this.refreshing = false;
         }
     }

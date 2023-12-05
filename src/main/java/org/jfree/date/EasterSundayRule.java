@@ -83,7 +83,7 @@ public class EasterSundayRule extends AnnualDateRule {
         final int l = i - j;
         final int month = 3 + (l + 40) / 44;
         final int day = l + 28 - 31 * (month / 4);
-        return SerialDate.createInstance(day, month, year);
+        return SerialDateFactory.createInstance(day, month, year);
     }
 
 }

@@ -57,6 +57,7 @@ package org.jfree.date;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Represents a date using an integer, in a similar fashion to the
@@ -124,8 +125,8 @@ public class SpreadsheetDate extends SerialDate {
             );
         }
 
-        if ((month >= Month.JANUARY.get())
-                && (month <= Month.DECEMBER.get())) {
+        if ((month >= Month.JANUARY.toInt())
+                && (month <= Month.DECEMBER.toInt())) {
             this.month = month;
         }
         else {
@@ -163,7 +164,7 @@ public class SpreadsheetDate extends SerialDate {
         }
 
         // the day-month-year needs to be synchronised with the serial number...
-      // get the year from the serial date
+      // toInt the year from the serial date
       final int days = this.serial - SERIAL_LOWER_BOUND;
       // overestimated because we ignored leap days
       final int overestimatedYYYY = 1900 + (days / 365);
@@ -194,7 +195,7 @@ public class SpreadsheetDate extends SerialDate {
               = LEAP_YEAR_AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH;
       }
 
-      // get the month from the serial date
+      // toInt the month from the serial date
       int mm = 1;
       int sss = ss2 + daysToEndOfPrecedingMonth[mm] - 1;
       while (sss < this.serial) {
@@ -221,22 +222,11 @@ public class SpreadsheetDate extends SerialDate {
     }
 
     /**
-     * Returns a <code>java.util.Date</code> equivalent to this date.
-     *
-     * @return The date.
-     */
-    public Date toDate() {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.set(getYYYY(), getMonth() - 1, getDayOfMonth(), 0, 0, 0);
-        return calendar.getTime();
-    }
-
-    /**
      * Returns the year (assume a valid range of 1900 to 9999).
      *
      * @return The year.
      */
-    public int getYYYY() {
+    public int getYear() {
         return this.year;
     }
 
@@ -368,39 +358,11 @@ public class SpreadsheetDate extends SerialDate {
         return (this.serial > other.toSerial());
     }
 
-    /**
-     * Returns true if this SerialDate is within the specified range (caller
-     * specifies whether or not the end-points are included).  The order of d1
-     * and d2 is not important.
-     *
-     * @param d1  one boundary date for the range.
-     * @param d2  a second boundary date for the range.
-     * @param include  a code that controls whether or not the start and end 
-     *                 dates are included in the range.
-     *
-     * @return <code>true</code> if this SerialDate is within the specified 
-     *         range.
-     */
-    public boolean isInRange(final SerialDate d1, final SerialDate d2, 
-                             final int include) {
+    public boolean isInRange(final SerialDate d1, final SerialDate d2,
+                             final DateInterval dateInterval) {
         final int s1 = d1.toSerial();
         final int s2 = d2.toSerial();
-        final int start = Math.min(s1, s2);
-        final int end = Math.max(s1, s2);
-        
-        final int s = toSerial();
-        if (include == SerialDate.INCLUDE_BOTH) {
-            return (s >= start && s <= end);
-        }
-        else if (include == SerialDate.INCLUDE_FIRST) {
-            return (s >= start && s < end);            
-        }
-        else if (include == SerialDate.INCLUDE_SECOND) {
-            return (s > start && s <= end);            
-        }
-        else {
-            return (s > start && s < end);            
-        }    
+        return dateInterval.eval(toSerial(), Math.min(s1, s2), Math.max(s1, s2));
     }
 
     /**
@@ -417,7 +379,7 @@ public class SpreadsheetDate extends SerialDate {
     private int calcSerial(final int d, final int m, final int y) {
         final int yy = ((y - 1900) * 365) + SerialDate.leapYearCount(y - 1);
         int mm = AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH[m];
-        if (m > Month.FEBRUARY.get()) {
+        if (m > Month.FEBRUARY.toInt()) {
             if (SerialDate.isLeapYear(y)) {
                 mm = mm + 1;
             }

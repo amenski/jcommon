@@ -47,12 +47,12 @@
  * 05-Dec-2001 : Fixed bug in SpreadsheetDate class (DG);
  * 29-May-2002 : Moved the month constants into a separate interface 
  *               (MonthConstants) (DG);
- * 27-Aug-2002 : Fixed bug in addMonths() method, thanks to N???levka Petr (DG);
+ * 27-Aug-2002 : Fixed bug in plusMonths() method, thanks to N???levka Petr (DG);
  * 03-Oct-2002 : Fixed errors reported by Checkstyle (DG);
  * 13-Mar-2003 : Implemented Serializable (DG);
- * 29-May-2003 : Fixed bug in addMonths method (DG);
+ * 29-May-2003 : Fixed bug in plusMonths method (DG);
  * 04-Sep-2003 : Implemented Comparable.  Updated the isInRange javadocs (DG);
- * 05-Jan-2005 : Fixed bug in addYears() method (1096282) (DG);
+ * 05-Jan-2005 : Fixed bug in plusYears() method (1096282) (DG);
  * 
  */
 
@@ -63,7 +63,7 @@ import java.io.Serializable;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Date;
 
 /**
  *  An abstract class that defines our requirements for manipulating dates,
@@ -79,7 +79,7 @@ import java.util.GregorianCalendar;
  *  January 2015) without concerning ourselves about the time of day, or the
  *  time-zone, or anything else.  That's what we've defined SerialDate for.
  *  <P>
- *  You can call getInstance() to get a concrete subclass of SerialDate,
+ *  You can call getInstance() to toInt a concrete subclass of SerialDate,
  *  without worrying about the exact implementation.
  *
  * @author David Gilbert
@@ -90,24 +90,8 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
     public static final DateFormatSymbols
         DATE_FORMAT_SYMBOLS = new SimpleDateFormat().getDateFormatSymbols();
 
-    /** The number of days in each month in non leap years. */
-    static final int[] LAST_DAY_OF_MONTH =
-        {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
     /** A useful constant for referring to the last week in a month. */
     public static final int LAST_WEEK_IN_MONTH = 0;
-
-    /** Useful range constant. */
-    public static final int INCLUDE_NONE = 0;
-
-    /** Useful range constant. */
-    public static final int INCLUDE_FIRST = 1;
-
-    /** Useful range constant. */
-    public static final int INCLUDE_SECOND = 2;
-
-    /** Useful range constant. */
-    public static final int INCLUDE_BOTH = 3;
 
     /** 
      * Useful constant for specifying a day of the week relative to a fixed 
@@ -213,14 +197,10 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      */
     public static int lastDayOfMonth(final Month month, final int yyyy) {
 
-        int result = LAST_DAY_OF_MONTH[month.get()];
-        if (month != Month.FEBRUARY) {
-            return result;
+        if (month == Month.FEBRUARY && isLeapYear(yyyy)) {
+            return month.lastDay() + 1;
         }
-        if (isLeapYear(yyyy)) {
-            ++result;
-        }
-        return result;
+        return month.lastDay();
     }
 
     /**
@@ -228,64 +208,57 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * date.
      *
      * @param days  the number of days to add (can be negative).
-     * @param base  the base date.
      *
      * @return a new date.
      */
-    public static SerialDate addDays(final int days, final SerialDate base) {
+    public SerialDate plusDays(final int days) {
 
-        final int serialDayNumber = base.toSerial() + days;
-        return SerialDate.createInstance(serialDayNumber);
-
+        final int serialDayNumber = toSerial() + days;
+        return SerialDateFactory.createInstance(serialDayNumber);
     }
 
     /**
-     * Creates a new date by adding the specified number of months to the base 
-     * date.
+     * Creates a new date by adding the specified number of months
      * <P>
-     * If the base date is close to the end of the month, the day on the result
+     * If the date is close to the end of the month, the day on the result
      * may be adjusted slightly:  31 May + 1 month = 30 June.
      *
      * @param months  the number of months to add (can be negative).
-     * @param base  the base date.
      *
      * @return a new date.
      */
-    public static SerialDate addMonths(final int months, 
-                                       final SerialDate base) {
+    public SerialDate plusMonths(final int months) {
 
-        final int yy = (12 * base.getYYYY() + base.getMonth() + months - 1) 
+        final int yy = (12 * getYear() + getMonth() + months - 1)
                        / 12;
-        final int mm = (12 * base.getYYYY() + base.getMonth() + months - 1) 
+        final int mm = (12 * getYear() + getMonth() + months - 1)
                        % 12 + 1;
         final int dd = Math.min(
-            base.getDayOfMonth(), SerialDate.lastDayOfMonth(Month.from(mm), yy)
+                getDayOfMonth(), SerialDate.lastDayOfMonth(Month.from(mm), yy)
         );
-        return SerialDate.createInstance(dd, mm, yy);
+        return SerialDateFactory.createInstance(dd, mm, yy);
 
     }
 
     /**
-     * Creates a new date by adding the specified number of years to the base 
-     * date.
+     * Creates a new date by adding the specified number of years
      *
      * @param years  the number of years to add (can be negative).
-     * @param base  the base date.
      *
      * @return A new date.
      */
-    public static SerialDate addYears(final int years, final SerialDate base) {
+    public SerialDate plusYears(final int years ) {
 
-        final int baseY = base.getYYYY();
-        final int baseM = base.getMonth();
-        final int baseD = base.getDayOfMonth();
+        final int baseY = getYear();
+        final int baseM = getMonth();
+        final int baseD = getDayOfMonth();
 
         final int targetY = baseY + years;
         final int targetD = Math.min(
             baseD, SerialDate.lastDayOfMonth(Month.from(baseM), targetY)
         );
 
-        return SerialDate.createInstance(targetD, baseM, targetY);
+        return SerialDateFactory.createInstance(targetD, baseM, targetY);
 
     }
 
@@ -294,15 +267,14 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * is BEFORE the base date.
      *
      * @param targetWeekday  a code for the target day-of-the-week.
-     * @param base  the base date.
      *
      * @return the latest date that falls on the specified day-of-the-week and 
      *         is BEFORE the base date.
      */
-    public static SerialDate getPreviousDayOfWeek(final Day targetWeekday, final SerialDate base) {
+    public SerialDate getPreviousDayOfWeek(Day targetWeekday) {
         final int adjust;
-        final int baseDOW = base.getDayOfWeek();
-        final int targetWeekdayNumber = targetWeekday.get();
+        final int baseDOW = getDayOfWeek();
+        final int targetWeekdayNumber = targetWeekday.toInt();
         if (baseDOW > targetWeekdayNumber) {
             adjust = Math.min(0, targetWeekdayNumber - baseDOW);
         }
@@ -310,24 +282,23 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
             adjust = -7 + Math.max(0, targetWeekdayNumber - baseDOW);
         }
 
-        return SerialDate.addDays(adjust, base);
+        return plusDays(adjust);
 
     }
 
     /**
      * Returns the earliest date that falls on the specified day-of-the-week
-     * and is AFTER the base date.
+     * and is AFTER the date.
      *
      * @param targetWeekday  a code for the target day-of-the-week.
-     * @param base  the base date.
      *
      * @return the earliest date that falls on the specified day-of-the-week 
      *         and is AFTER the base date.
      */
-    public static SerialDate getFollowingDayOfWeek(Day targetWeekday, final SerialDate base) {
+    public SerialDate getFollowingDayOfWeek(Day targetWeekday) {
         final int adjust;
-        final int baseDOW = base.getDayOfWeek();
-        final int targetWeekdayNumber = targetWeekday.get();
+        final int baseDOW = getDayOfWeek();
+        final int targetWeekdayNumber = targetWeekday.toInt();
         if (baseDOW >= targetWeekdayNumber) {
             adjust = 7 + Math.min(0, targetWeekdayNumber - baseDOW);
         }
@@ -335,22 +306,21 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
             adjust = Math.max(0, targetWeekdayNumber - baseDOW);
         }
 
-        return SerialDate.addDays(adjust, base);
+        return plusDays(adjust);
     }
 
     /**
      * Returns the date that falls on the specified day-of-the-week and is
-     * CLOSEST to the base date.
+     * CLOSEST to the date.
      *
      * @param targetDOW  a code for the target day-of-the-week.
-     * @param base  the base date.
      *
      * @return the date that falls on the specified day-of-the-week and is 
      *         CLOSEST to the base date.
      */
-    public static SerialDate getNearestDayOfWeek(final Day targetDOW, final SerialDate base) {
-        final int baseDOW = base.getDayOfWeek();
-        final int targetWeekdayNumber = targetDOW.get();
+    public SerialDate getNearestDayOfWeek(Day targetDOW) {
+        final int baseDOW = getDayOfWeek();
+        final int targetWeekdayNumber = targetDOW.toInt();
         int adjust = -Math.abs(targetWeekdayNumber - baseDOW);
         if (adjust >= 4) {
             adjust = 7 - adjust;
@@ -358,7 +328,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
         if (adjust <= -4) {
             adjust = 7 + adjust;
         }
-        return SerialDate.addDays(adjust, base);
+        return plusDays(adjust);
 
     }
 
@@ -371,53 +341,9 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      */
     public SerialDate getEndOfCurrentMonth(final SerialDate base) {
         final int last = SerialDate.lastDayOfMonth(
-            base.getMonthConstant(), base.getYYYY()
+            base.getMonthConstant(), base.getYear()
         );
-        return SerialDate.createInstance(last, base.getMonth(), base.getYYYY());
-    }
-
-    /**
-     * Factory method that returns an instance of some concrete subclass of 
-     * {@link SerialDate}.
-     *
-     * @param day  the day (1-31).
-     * @param month  the month (1-12).
-     * @param yyyy  the year (in the range 1900 to 9999).
-     *
-     * @return An instance of {@link SerialDate}.
-     */
-    public static SerialDate createInstance(final int day, final int month, 
-                                            final int yyyy) {
-        return new SpreadsheetDate(day, month, yyyy);
-    }
-
-    /**
-     * Factory method that returns an instance of some concrete subclass of 
-     * {@link SerialDate}.
-     *
-     * @param serial  the serial number for the day (1 January 1900 = 2).
-     *
-     * @return a instance of SerialDate.
-     */
-    public static SerialDate createInstance(final int serial) {
-        return new SpreadsheetDate(serial);
-    }
-
-    /**
-     * Factory method that returns an instance of a subclass of SerialDate.
-     *
-     * @param date  A Java date object.
-     *
-     * @return a instance of SerialDate.
-     */
-    public static SerialDate createInstance(final java.util.Date date) {
-
-        final GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
-        return new SpreadsheetDate(calendar.get(Calendar.DATE),
-                                   calendar.get(Calendar.MONTH) + 1,
-                                   calendar.get(Calendar.YEAR));
-
+        return SerialDateFactory.createInstance(last, base.getMonth(), base.getYear());
     }
 
     /**
@@ -435,7 +361,11 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      *
      * @return this as <code>java.util.Date</code>.
      */
-    public abstract java.util.Date toDate();
+    public Date toDate() {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(getYear(), getMonth() - 1, getDayOfMonth(), 0, 0, 0);
+        return calendar.getTime();
+    }
 
     /**
      * Returns the description that is attached to the date.  It is not 
@@ -465,7 +395,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      */
     public String toString() {
         return getDayOfMonth() + "-" +  Month.from(getMonth())
-                               + "-" + getYYYY();
+                               + "-" + getYear();
     }
 
     /**
@@ -473,7 +403,7 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      *
      * @return the year.
      */
-    public abstract int getYYYY();
+    public abstract int getYear();
 
     /**
      * Returns the month (January = 1, February = 2, March = 3).
@@ -573,8 +503,8 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
     }
 
     /**
-     * Returns <code>true</code> if this {@link SerialDate} is within the 
-     * specified range (INCLUSIVE).  The date order of d1 and d2 is not 
+     * Returns <code>true</code> if this {@link SerialDate} is within the
+     * specified range (INCLUSIVE).  The date order of d1 and d2 is not
      * important.
      *
      * @param d1  a boundary date for the range.
@@ -583,23 +513,10 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * @return A boolean.
      */
     public boolean isInRange(SerialDate d1, SerialDate d2) {
-        return isInRange(d1, d2, INCLUDE_BOTH);
+        return isInRange(d1, d2, DateInterval.INCLUDE_BOTH);
     }
 
-    /**
-     * Returns <code>true</code> if this {@link SerialDate} is within the 
-     * specified range (caller specifies whether or not the end-points are 
-     * included).  The date order of d1 and d2 is not important.
-     *
-     * @param d1  a boundary date for the range.
-     * @param d2  the other boundary date for the range.
-     * @param include  a code that controls whether or not the start and end 
-     *                 dates are included in the range.
-     *
-     * @return A boolean.
-     */
-    public abstract boolean isInRange(SerialDate d1, SerialDate d2, 
-                                      int include);
+    public abstract boolean isInRange(SerialDate d1, SerialDate d2, DateInterval include);
 
     /**
      * Returns the latest date that falls on the specified day-of-the-week and
@@ -610,8 +527,8 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * @return the latest date that falls on the specified day-of-the-week and
      *         is BEFORE this date.
      */
-    public SerialDate getPreviousDayOfWeek(final int targetDOW) {
-        return getPreviousDayOfWeek(Day.from(targetDOW), this);
+    public SerialDate getPreviousDayOfWeek(int targetDOW) {
+        return getPreviousDayOfWeek(Day.from(targetDOW));
     }
 
     /**
@@ -623,8 +540,8 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      * @return the earliest date that falls on the specified day-of-the-week
      *         and is AFTER this date.
      */
-    public SerialDate getFollowingDayOfWeek(final int targetDOW) {
-        return getFollowingDayOfWeek(Day.from(targetDOW), this);
+    public SerialDate getFollowingDayOfWeek(int targetDOW) {
+        return getFollowingDayOfWeek(Day.from(targetDOW));
     }
 
     /**
@@ -634,7 +551,37 @@ public abstract class SerialDate implements Comparable<SerialDate>, Serializable
      *
      * @return the nearest date that falls on the specified day-of-the-week.
      */
-    public SerialDate getNearestDayOfWeek(final int targetDOW) {
-        return getNearestDayOfWeek(Day.from(targetDOW), this);
+    public SerialDate getNearestDayOfWeek(int targetDOW) {
+        return getNearestDayOfWeek(Day.from(targetDOW));
+    }
+
+    public enum DateInterval {
+
+        INCLUDE_NONE {
+            @Override
+            public boolean eval(int d, int left, int right) {
+                return d > left && d < right;
+            }
+        },
+        INCLUDE_FIRST {
+            @Override
+            public boolean eval(int d, int left, int right) {
+                return d >= left && d < right;
+            }
+        },
+        INCLUDE_SECOND {
+            @Override
+            public boolean eval(int d, int left, int right) {
+                return d > left && d <= right;
+            }
+        },
+        INCLUDE_BOTH {
+            @Override
+            public boolean eval(int d, int left, int right) {
+                return d >= left && d <= right;
+            }
+        };
+
+        public abstract boolean eval(int d, int left, int right);
     }
 }

@@ -10,7 +10,7 @@ public enum Day {
         this.dayNumber = dayNumber;
     }
 
-    public int get() {
+    public int toInt() {
         return dayNumber;
     }
 
